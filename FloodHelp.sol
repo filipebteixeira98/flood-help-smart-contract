@@ -21,7 +21,7 @@ contract FloodHelp {
 
     function openRequest(string memory title, string memory description, string memory contact, uint goal) public {
         lastId++;
-        
+
         requests[lastId] = Request({
             id: lastId,
             author: msg.sender,
@@ -34,16 +34,16 @@ contract FloodHelp {
             open: true
         });
     }
-    
+
     function closeRequest(uint id) public {
         address author = requests[id].author;
 
         uint balance = requests[id].balance;
-        
+
         uint goal = requests[id].goal;
-        
+
         require(requests[id].open && msg.sender == author || balance >= goal, unicode"You do not have permission to close this request!");
-    
+
         requests[id].open = false;
 
         if (balance > 0) {
@@ -52,22 +52,22 @@ contract FloodHelp {
             payable(author).transfer(balance);
         }
     }
-    
+
     function donate(uint id) public payable {
         requests[id].balance += msg.value;
 
-        if (requests[id].balance >= requests[id].goal) {
+        if (requests[id].balance >= requests[id].goal)
             closeRequest(id);
-        }
+
     }
-    
+
     function getOpenRequests(uint startId, uint quantity) public view returns (Request[] memory) {
         uint id = startId;
 
         uint count = 0;
 
         Request[] memory result = new Request[](quantity);
-        
+
         do {
             if (requests[id].open) {
                 result[count] = requests[id];
@@ -80,4 +80,4 @@ contract FloodHelp {
 
         return result;
     }
-} 
+}
